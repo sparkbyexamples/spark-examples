@@ -7,12 +7,9 @@
   <inceptionYear>2008</inceptionYear>
   <modules>
     <module>spark-hive</module>
-    <module>scala-kafka</module>
-    <module>scala-examples</module>
     <module>spark-examples</module>
     <module>spark-kafka</module>
     <module>spark-streaming</module>
-    <module>spark-avro-examples</module>
   </modules>
   <!--
   <properties>
