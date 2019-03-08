@@ -12,13 +12,15 @@
     <module>spark-examples</module>
     <module>spark-kafka</module>
     <module>spark-streaming</module>
-      <module>spark-avro-examples</module>
+    <module>spark-avro-examples</module>
   </modules>
+  <!--
   <properties>
     <scala.version>2.11.11</scala.version>
     <spark.version>2.4.0</spark.version>
   </properties>
-
+  -->
+<!--
   <repositories>
     <repository>
       <id>scala-tools.org</id>
@@ -34,7 +36,7 @@
       <url>http://scala-tools.org/repo-releases</url>
     </pluginRepository>
   </pluginRepositories>
-
+-->
   <!--
   <dependencies>
     <dependency>
@@ -92,6 +94,8 @@
     </dependency>
   </dependencies>
 -->
+
+  <!--
   <build>
     <sourceDirectory>src/main/scala</sourceDirectory>
     <plugins>
@@ -143,4 +147,5 @@
       </plugin>
     </plugins>
   </reporting>
+  -->
 </project>

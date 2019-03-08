@@ -13,7 +13,7 @@
     <artifactId>spark-avro-examples</artifactId>
     <properties>
         <scala.version>2.11.11</scala.version>
-        <spark.version>2.2.0</spark.version>
+        <spark.version>2.3.0</spark.version>
     </properties>
     <repositories>
         <repository>
@@ -48,7 +48,7 @@
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-sql_2.11</artifactId>
-            <version>2.3.0</version>
+            <version>${spark.version}</version>
             <scope>compile</scope>
         </dependency>
 

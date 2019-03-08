@@ -10,6 +10,7 @@
     <inceptionYear>2008</inceptionYear>
     <properties>
         <scala.version>2.11.11</scala.version>
+        <spark.version>2.4.0</spark.version>
     </properties>
 
     <repositories>
