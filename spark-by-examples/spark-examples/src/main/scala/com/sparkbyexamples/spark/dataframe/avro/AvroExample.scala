@@ -1,42 +1,82 @@
 package com.sparkbyexamples.spark.dataframe.avro
 
-import org.apache.spark.sql.types.{IntegerType, StringType, StructType}
-import org.apache.spark.sql.{Row, SparkSession}
+import java.io.File
 
+import org.apache.avro.Schema
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.{SaveMode, SparkSession}
+
+/**
+  * Spark Avro library example
+  * Avro schema example
+  * Avro file format
+  *
+  */
 object AvroExample {
 
   def main(args: Array[String]): Unit = {
 
-
-    val spark: SparkSession = SparkSession.builder()
-      .master("local[1]")
+    val spark: SparkSession = SparkSession.builder().master("local[1]")
       .appName("SparkByExamples.com")
       .getOrCreate()
 
-    val data = Seq(Row(Row("James ","","Smith"),"36636","M",3000),
-      Row(Row("Michael ","Rose",""),"40288","M",4000),
-      Row(Row("Robert ","","Williams"),"42114","M",4000),
-      Row(Row("Maria ","Anne","Jones"),"39192","F",4000),
-      Row(Row("Jen","Mary","Brown"),"","F",-1)
+    val data = Seq(("James ", "", "Smith", 2018, 1, "M", 3000),
+      ("Michael ", "Rose", "", 2010, 3, "M", 4000),
+      ("Robert ", "", "Williams", 2010, 3, "M", 4000),
+      ("Maria ", "Anne", "Jones", 2005, 5, "F", 4000),
+      ("Jen", "Mary", "Brown", 2010, 7, "", -1)
     )
 
-    val schema = new StructType()
-      .add("name",new StructType()
-        .add("firstname",StringType)
-        .add("middlename",StringType)
-        .add("lastname",StringType))
-      .add("dob",StringType)
-      .add("gender",StringType)
-      .add("salary",IntegerType)
+    val columns = Seq("firstname", "middlename", "lastname", "dob_year",
+      "dob_month", "gender", "salary")
+    import spark.sqlContext.implicits._
+    val df = data.toDF(columns: _*)
 
-    val df = spark.createDataFrame(spark.sparkContext.parallelize(data),schema)
-    //val readFromHf = spark.read.format("com.databricks.spark.avro")
-    // .load("C:\\Users\\a03078a\\DataFabric\\Workspace\\bureau-australia-app\\acceptance\\accepted\\TEL_11102018_0011111_MVP_TEST.csv.6508434824099390398\\part-00000-b34d116a-87ae-4c76-b0c5-ebdeb8147116-c000.avro")
-    //readFromHf.printSchema()
+    /**
+      * Write Avro File
+      */
+    df.write.format("avro")
+      .mode(SaveMode.Overwrite)
+      .save("C:\\tmp\\spark_out\\avro\\person.avro")
 
-    df.write.format("avro").save("C:/tmp/spark_out/avro/namesAndFavColors.avro")
-    // df.write.format("org.apache.spark.sql.avro").save("C:/tmp/spark_out/avro/namesAndFavColors.avro")
+    /**
+      * Read Avro File
+      */
+    spark.read.format("avro").load("C:\\tmp\\spark_out\\avro\\person.avro").show()
 
+    /**
+      * Write Avro Partition
+      */
+    df.write.partitionBy("dob_year","dob_month")
+      .format("avro")
+      .mode(SaveMode.Overwrite)
+      .save("C:\\tmp\\spark_out\\avro\\person_partition.avro")
 
+    /**
+      * Reading Avro Partition
+      */
+    spark.read
+      .format("avro")
+      .load("C:\\tmp\\spark_out\\avro\\person_partition.avro")
+      .where(col("dob_year") === 2010)
+      .show()
+
+    /**
+      * Explicit Avro schema
+      */
+    val schemaAvro = new Schema.Parser()
+      .parse(new File("src/main/resources/person.avsc"))
+
+    spark.read
+      .format("avro")
+      .option("avroSchema", schemaAvro.toString)
+      .load("C:\\tmp\\spark_out\\avro\\person.avro")
+      .show()
+
+    /**
+      * Avro Spark SQL
+      */
+    spark.sqlContext.sql("CREATE TEMPORARY VIEW PERSON USING avro OPTIONS (path \"C:/tmp/spark_out/avro/person.avro\")")
+    spark.sqlContext.sql("SELECT * FROM PERSON").show()
   }
 }
