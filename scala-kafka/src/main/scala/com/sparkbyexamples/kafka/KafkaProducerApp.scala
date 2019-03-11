@@ -4,12 +4,14 @@ import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 object KafkaProducerApp extends App {
 
   val props:Properties = new Properties()
-  props.put("bootstrap.servers","192.168.1.100:9092")
+  props.put("bootstrap.servers","192.168.1.128:9092")
   props.put("key.serializer","org.apache.kafka.common.serialization.StringSerializer")
   props.put("value.serializer","org.apache.kafka.common.serialization.StringSerializer")
   props.put("acks","all")
+
   val producer = new KafkaProducer[String, String](props)
   val topic = "text_topic"
+
   try {
     for (i <- 0 to 15) {
       val record = new ProducerRecord[String, String](topic, i.toString, "My Site is sparkbyexamples.com " + i)
