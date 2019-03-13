@@ -35,12 +35,12 @@ object AvroExample {
       */
     df.write.format("avro")
       .mode(SaveMode.Overwrite)
-      .save("C:\\tmp\\spark_out\\avro\\person.avro")
+      .save("C:/tmp/spark_out/avro/person.avro")
 
     /**
       * Read Avro File
       */
-    spark.read.format("avro").load("C:\\tmp\\spark_out\\avro\\person.avro").show()
+    spark.read.format("avro").load("C:/tmp/spark_out/avro/person.avro").show()
 
     /**
       * Write Avro Partition
@@ -48,14 +48,14 @@ object AvroExample {
     df.write.partitionBy("dob_year","dob_month")
       .format("avro")
       .mode(SaveMode.Overwrite)
-      .save("C:\\tmp\\spark_out\\avro\\person_partition.avro")
+      .save("C:/tmp/spark_out/avro/person_partition.avro")
 
     /**
       * Reading Avro Partition
       */
     spark.read
       .format("avro")
-      .load("C:\\tmp\\spark_out\\avro\\person_partition.avro")
+      .load("C:/tmp/spark_out/avro/person_partition.avro")
       .where(col("dob_year") === 2010)
       .show()
 
@@ -68,7 +68,7 @@ object AvroExample {
     spark.read
       .format("avro")
       .option("avroSchema", schemaAvro.toString)
-      .load("C:\\tmp\\spark_out\\avro\\person.avro")
+      .load("C:/tmp/spark_out/avro/person.avro")
       .show()
 
     /**

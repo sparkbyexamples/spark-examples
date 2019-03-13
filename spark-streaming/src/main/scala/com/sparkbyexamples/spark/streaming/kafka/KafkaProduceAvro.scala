@@ -1,10 +1,7 @@
-package com.sparkbyexamples.spark.kafka.avro
-
-import java.nio.file.{Files, Paths}
+package com.sparkbyexamples.spark.streaming.kafka
 
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.avro._
-import org.apache.spark.sql.functions._
+
 object KafkaProduceAvro {
 
   def main(args:Array[String]): Unit ={
@@ -13,6 +10,8 @@ object KafkaProduceAvro {
     val spark: SparkSession = SparkSession.builder().master("local[1]")
       .appName("SparkByExamples.com")
       .getOrCreate()
+
+    spark.sparkContext.setLogLevel("ERROR")
 
     val data = Seq((1,"James ","","Smith",2018,1,"M",3000),
       (2,"Michael ","Rose","",2010,3,"M",4000),

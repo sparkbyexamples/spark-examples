@@ -1,4 +1,4 @@
-package com.sparkbyexamples.spark.streaming
+package com.sparkbyexamples.spark.streaming.kafka
 
 import org.apache.spark.sql.SparkSession
 object SparkStreamingKafkaUserObject {

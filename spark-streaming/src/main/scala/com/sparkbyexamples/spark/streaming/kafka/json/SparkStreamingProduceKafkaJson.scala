@@ -1,10 +1,10 @@
-package com.sparkbyexamples.spark.streaming
+package com.sparkbyexamples.spark.streaming.kafka.json
 
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.{col, from_json}
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
 
-object SparkStreamingKafkaProducerJson {
+object SparkStreamingProduceKafkaJson {
 
   def main(args: Array[String]): Unit = {
 

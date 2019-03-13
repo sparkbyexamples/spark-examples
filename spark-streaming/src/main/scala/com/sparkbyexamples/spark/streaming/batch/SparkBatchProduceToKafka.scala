@@ -1,7 +1,7 @@
 package com.sparkbyexamples.spark.streaming.batch
 import org.apache.spark.sql.SparkSession
 //https://spark.apache.org/docs/2.3.0/structured-streaming-kafka-integration.html
-object WriteDataFrameToKafka {
+object SparkBatchProduceToKafka {
 
   def main(args: Array[String]): Unit = {
 
@@ -9,6 +9,8 @@ object WriteDataFrameToKafka {
       .master("local[1]")
       .appName("SparkByExample")
       .getOrCreate()
+
+    spark.sparkContext.setLogLevel("ERROR")
 
     val data = Seq (("iphone", "2007"),("iphone 3G","2008"),
       ("iphone 3GS","2009"),
@@ -19,6 +21,7 @@ object WriteDataFrameToKafka {
       ("iphone 10","2017"))
 
     val df = spark.createDataFrame(data).toDF("key","value")
+
     /*
       since we are using dataframe which is already in text,
       selectExpr is optional.
@@ -33,5 +36,37 @@ object WriteDataFrameToKafka {
       .option("kafka.bootstrap.servers","192.168.1.100:9092")
       .option("topic","text_topic6")
       .save()
+
+    /*
+      Write Json to Kafka
+     */
+    val data2 = Seq((1,"James ","","Smith",2018,1,"M",3000),
+      (2,"Michael ","Rose","",2010,3,"M",4000),
+      (3,"Robert ","","Williams",2010,3,"M",4000),
+      (4,"Maria ","Anne","Jones",2005,5,"F",4000),
+      (5,"Jen","Mary","Brown",2010,7,"",-1)
+    )
+
+    val columns = Seq("id","firstname","middlename","lastname","dob_year",
+      "dob_month","gender","salary")
+    import spark.sqlContext.implicits._
+    val df2 = data2.toDF(columns:_*)
+
+    df2.toJSON.write
+      .format("kafka")
+      .option("kafka.bootstrap.servers","192.168.1.100:9092")
+      .option("topic","text_topic6")
+      .save()
+
+    /*
+      Another way of Writing Json
+      */
+    df2.selectExpr("CAST(id AS STRING) AS key", "to_json(struct(*)) AS value")
+      .write
+      .format("kafka")
+      .option("kafka.bootstrap.servers","192.168.1.100:9092")
+      .option("topic","text_topic6")
+      .save()
+
   }
 }

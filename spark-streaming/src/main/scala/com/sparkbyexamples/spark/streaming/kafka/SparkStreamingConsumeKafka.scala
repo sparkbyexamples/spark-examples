@@ -1,9 +1,9 @@
-package com.sparkbyexamples.spark.streaming
+package com.sparkbyexamples.spark.streaming.kafka
 
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.{explode, split}
 
-object SparkStreamingKafkaConsumer {
+object SparkStreamingConsumeKafka {
 
   def main(args: Array[String]): Unit = {
 
@@ -17,7 +17,7 @@ object SparkStreamingKafkaConsumer {
     val df = spark.readStream
       .format("kafka")
       .option("kafka.bootstrap.servers", "192.168.1.100:9092")
-      .option("subscribe", "topic_text6")
+      .option("subscribe", "topic_text")
       //.option("subscribePattern", "topic.*")
       .option("startingOffsets", "earliest") // Other possible values assign and latest
       .load()
