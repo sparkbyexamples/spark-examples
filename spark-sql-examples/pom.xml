@@ -31,6 +31,7 @@
     </pluginRepositories>
 
     <dependencies>
+        <!--
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
@@ -66,7 +67,7 @@
            <version>0.4.1</version>
        </dependency>
 
-
+-->
     </dependencies>
 
     <build>
