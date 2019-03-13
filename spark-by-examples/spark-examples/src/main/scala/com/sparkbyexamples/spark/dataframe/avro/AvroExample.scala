@@ -1,7 +1,12 @@
 package com.sparkbyexamples.spark.dataframe.avro
 
+import java.nio.file.{Files, Paths}
+
 import org.apache.spark.sql.types.{IntegerType, StringType, StructType}
 import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.avro.from_avro
+import org.apache.spark.sql.avro.to_avro
 
 object AvroExample {
 
@@ -13,30 +18,29 @@ object AvroExample {
       .appName("SparkByExamples.com")
       .getOrCreate()
 
-    val data = Seq(Row(Row("James ","","Smith"),"36636","M",3000),
-      Row(Row("Michael ","Rose",""),"40288","M",4000),
-      Row(Row("Robert ","","Williams"),"42114","M",4000),
-      Row(Row("Maria ","Anne","Jones"),"39192","F",4000),
-      Row(Row("Jen","Mary","Brown"),"","F",-1)
-    )
+    // `from_avro` requires Avro schema in JSON string format.
+    val jsonFormatSchema = new String(Files.readAllBytes(Paths.get("./examples/src/main/resources/user.avsc")))
 
-    val schema = new StructType()
-      .add("name",new StructType()
-        .add("firstname",StringType)
-        .add("middlename",StringType)
-        .add("lastname",StringType))
-      .add("dob",StringType)
-      .add("gender",StringType)
-      .add("salary",IntegerType)
+    val df = spark
+      .readStream
+      .format("kafka")
+      .option("kafka.bootstrap.servers", "host1:port1,host2:port2")
+      .option("subscribe", "topic1")
+      .load()
 
-    val df = spark.createDataFrame(spark.sparkContext.parallelize(data),schema)
-    //val readFromHf = spark.read.format("com.databricks.spark.avro")
-    // .load("C:\\Users\\a03078a\\DataFabric\\Workspace\\bureau-australia-app\\acceptance\\accepted\\TEL_11102018_0011111_MVP_TEST.csv.6508434824099390398\\part-00000-b34d116a-87ae-4c76-b0c5-ebdeb8147116-c000.avro")
-    //readFromHf.printSchema()
+    // 1. Decode the Avro data into a struct;
+    // 2. Filter by column `favorite_color`;
+    // 3. Encode the column `name` in Avro format.
+    val output = df
+      .select(from_avro(col("value"), jsonFormatSchema) as 'user)
+      .where("user.favorite_color == \"red\"")
+      .select(to_avro(col("user.name")) as "value")
 
-    df.write.format("avro").save("C:/tmp/spark_out/avro/namesAndFavColors.avro")
-    // df.write.format("org.apache.spark.sql.avro").save("C:/tmp/spark_out/avro/namesAndFavColors.avro")
-
-
+    val query = output
+      .writeStream
+      .format("kafka")
+      .option("kafka.bootstrap.servers", "host1:port1,host2:port2")
+      .option("topic", "topic2")
+      .start()
   }
 }
