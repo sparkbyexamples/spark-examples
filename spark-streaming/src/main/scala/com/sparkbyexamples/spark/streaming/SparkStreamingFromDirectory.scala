@@ -22,7 +22,8 @@ object SparkStreamingFromDirectory {
     df.printSchema()
 
     val groupDF = df.select(
-      get_json_object(col("value").cast("string"),"$.Zipcode").alias("Zipcode")).groupBy("Zipcode").count()
+      get_json_object(col("value").cast("string"),"$.Zipcode")
+        .alias("Zipcode")).groupBy("Zipcode").count()
 
     groupDF.printSchema()
 
