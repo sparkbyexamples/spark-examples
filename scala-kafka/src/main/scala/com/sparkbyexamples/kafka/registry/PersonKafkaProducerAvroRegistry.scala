@@ -6,19 +6,23 @@
 //import org.apache.avro.generic.GenericRecord
 //import org.apache.avro.generic.GenericRecordBuilder
 //import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, ProducerRecord}
-//import java.io.File
+//import java.io.{ByteArrayOutputStream, File}
+//
+//import org.apache.avro.io.{BinaryEncoder, EncoderFactory}
+//import org.apache.avro.specific.SpecificDatumWriter
 //
 //
 //
-//object PersonKafkaProducerAvroRegistry_ {
+//object PersonKafkaProducerAvroRegistry {
 //
 //  def main(args: Array[String]): Unit = {
 //
 //    val props = new Properties()
-//    props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092")
+//    props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.1.100:9092")
 //    props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,"io.confluent.kafka.serializers.StringSerializer.class")
 //    props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,"io.confluent.kafka.serializers.KafkaAvroSerializer.class");
-//    props.put("schema.registry.url", "http://localhost:8081");
+//   // props.put("serializer.class", "kafka.serializer.DefaultEncoder")
+//
 //    val producer = new KafkaProducer[Object, Object](props);
 //
 //    val key = "key1";
@@ -34,6 +38,14 @@
 //      .set("lastName", "My last Name")
 //      .set("birthDate", "My Date of Birth")
 //      .build()
+//
+////    val writer = new SpecificDatumWriter[GenericRecord](schema)
+////    val out = new ByteArrayOutputStream()
+////    val encoder: BinaryEncoder = EncoderFactory.get().binaryEncoder(out, null)
+////    writer.write(avroPerson, encoder)
+////    encoder.flush()
+////    out.close()
+////    val serializedBytes: Array[Byte] = out.toByteArray()
 //
 //    val record:ProducerRecord[Object, Object] = new ProducerRecord[Object, Object]("avro_topic", key, avroPerson);
 //

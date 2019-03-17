@@ -1,4 +1,4 @@
-package com.sparkbyexamples.spark.streaming
+package com.sparkbyexamples.spark.streaming.inprogress
 
 import org.apache.spark.sql.SparkSession
 

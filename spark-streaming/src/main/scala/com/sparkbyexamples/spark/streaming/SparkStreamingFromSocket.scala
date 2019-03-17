@@ -28,7 +28,7 @@ object SparkStreamingFromSocket {
       .format("console")
       .outputMode("complete")
       .start()
-    query.awaitTermination()
+      .awaitTermination()
 
   }
 }

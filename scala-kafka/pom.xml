@@ -47,6 +47,7 @@
             <artifactId>kafka-clients</artifactId>
             <version>2.1.0</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-streams</artifactId>
@@ -57,14 +58,23 @@
             <artifactId>kafka-streams-scala_2.11</artifactId>
             <version>2.1.0</version>
         </dependency>
-
+-->
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
             <version>1.9.13</version>
-
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>1.8.2</version>
+        </dependency>
+
+
     </dependencies>
+
+
 
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
@@ -104,6 +114,9 @@
                     </classpathContainers>
                 </configuration>
             </plugin>
+
+
+
         </plugins>
     </build>
     <reporting>

@@ -1,9 +1,9 @@
-package com.sparkbyexamples.spark.streaming
+package com.sparkbyexamples.spark.streaming.inprogress
 
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
 
-object SparkStreamingFromDirectory {
+object SparkStreamingFromDirectoryTmp {
 
   def main(args: Array[String]): Unit = {
 
@@ -36,21 +36,30 @@ object SparkStreamingFromDirectory {
     )
 
     val df = spark.readStream
+      //.option("header","true")
+      //.option("maxFilesPerTrigger",3)
       .schema(schema)
       .json("c:/tmp/stream_folder")
+      //.text("c:/tmp/stream_folder")
 
     df.printSchema()
+
+//    val groupDF = df.select(
+//      get_json_object(col("value").cast("string"),"$.Zipcode")
+//        .alias("Zipcode")).groupBy("Zipcode").count()
 
     val groupDF = df.select("Zipcode")
         .groupBy("Zipcode").count()
     groupDF.printSchema()
 
-    df.writeStream
+    groupDF.writeStream
       .format("console")
       .outputMode("complete")
       .option("truncate",false)
       .option("newRows",30)
       .start()
       .awaitTermination()
+
+
   }
 }

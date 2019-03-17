@@ -1,8 +1,8 @@
-package com.sparkbyexamples.spark.streaming
+package com.sparkbyexamples.spark.streaming.inprogress
 
 import org.apache.spark.sql.SparkSession
 
-object SparkStreamingToS3_ {
+object SparkStreamingToHDFS_ {
 
   def main(args: Array[String]): Unit = {
 
@@ -20,6 +20,8 @@ object SparkStreamingToS3_ {
       .load()
 
     df.printSchema()
+
+
 
   }
 }
