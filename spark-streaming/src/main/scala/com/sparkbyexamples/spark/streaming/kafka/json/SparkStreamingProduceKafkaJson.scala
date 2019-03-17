@@ -34,7 +34,7 @@ object SparkStreamingProduceKafkaJson {
       .outputMode("append")
       .option("kafka.bootstrap.servers", "192.168.1.100:9092")
       .option("topic", "topic_text")
-      .option("checkpointLocation", "c:/tmp/checkpoint")
+      //.option("checkpointLocation", "c:/tmp/checkpoint")
       .start()
       .awaitTermination()
 
