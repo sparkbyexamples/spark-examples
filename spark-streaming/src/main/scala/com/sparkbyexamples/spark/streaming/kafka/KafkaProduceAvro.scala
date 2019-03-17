@@ -25,6 +25,7 @@ object KafkaProduceAvro {
     import spark.sqlContext.implicits._
     val df = data.toDF(columns:_*)
 
+    df.write.json("c:/tmp/person.json")
 
 
 

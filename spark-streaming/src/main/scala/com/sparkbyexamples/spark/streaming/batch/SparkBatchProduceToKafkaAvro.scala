@@ -15,24 +15,6 @@ object SparkBatchProduceToKafkaAvro {
 
     spark.sparkContext.setLogLevel("ERROR")
 
-//    val data = Seq (("iphone", "2007"),("iphone 3G","2008"),
-//      ("iphone 3GS","2009"),
-//      ("iphone 4","2010"),
-//      ("iphone 4S","2011"),
-//      ("iphone 5","2012"),
-//      ("iphone 8","2014"),
-//      ("iphone 10","2017"))
-//
-//    val df = spark.createDataFrame(data).toDF("key","value")
-//
-//    df.select(to_avro(col("key")).as("key"),
-//      to_avro(col("value")).as("value"))
-//      .write
-//      .format("kafka")
-//      .option("kafka.bootstrap.servers","192.168.1.100:9092")
-//      .option("topic","avro_topic")
-//      .save()
-
     /*
       Write Avro to Kafka
      */

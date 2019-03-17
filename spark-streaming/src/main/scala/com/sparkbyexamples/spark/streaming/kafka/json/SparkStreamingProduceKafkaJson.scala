@@ -22,27 +22,6 @@ object SparkStreamingProduceKafkaJson {
 
     df.printSchema()
 
-    // Convert Json string to Object
-    val schema = StructType(
-      List(
-        StructField("RecordNumber", IntegerType, true),
-        StructField("Zipcode", StringType, true),
-        StructField("ZipCodeType", StringType, true),
-        StructField("City", StringType, true),
-        StructField("State", StringType, true),
-        StructField("LocationType", StringType, true),
-        StructField("Lat", StringType, true),
-        StructField("Long", StringType, true),
-        StructField("Xaxis", StringType, true),
-        StructField("Yaxis", StringType, true),
-        StructField("Zaxis", StringType, true),
-        StructField("WorldRegion", StringType, true),
-        StructField("Country", StringType, true),
-        StructField("LocationText", StringType, true),
-        StructField("Location", StringType, true),
-        StructField("Decommisioned", StringType, true)
-      )
-    )
 
     val zipcodeDF = df.select(
       from_json(col("value").cast("string"), schema).alias("zipcode")).select("zipcode.*")
