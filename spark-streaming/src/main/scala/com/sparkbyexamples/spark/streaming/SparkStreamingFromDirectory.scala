@@ -45,7 +45,7 @@ object SparkStreamingFromDirectory {
         .groupBy("Zipcode").count()
     groupDF.printSchema()
 
-    df.writeStream
+    groupDF.writeStream
       .format("console")
       .outputMode("complete")
       .option("truncate",false)

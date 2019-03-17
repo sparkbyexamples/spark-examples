@@ -22,21 +22,21 @@ object SparkStreamingProduceKafkaJson {
 
     df.printSchema()
 
-
-    val zipcodeDF = df.select(
-      from_json(col("value").cast("string"), schema).alias("zipcode")).select("zipcode.*")
-
-    zipcodeDF.printSchema()
-
-    zipcodeDF.selectExpr("CAST(RecordNumber AS STRING) AS key", "to_json(struct(*)) AS value")
-      .writeStream
-      .format("kafka")
-      .outputMode("append")
-      .option("kafka.bootstrap.servers", "192.168.1.100:9092")
-      .option("topic", "topic_text")
-      //.option("checkpointLocation", "c:/tmp/checkpoint")
-      .start()
-      .awaitTermination()
+//
+//    val zipcodeDF = df.select(
+//      from_json(col("value").cast("string"), schema).alias("zipcode")).select("zipcode.*")
+//
+//    zipcodeDF.printSchema()
+//
+//    zipcodeDF.selectExpr("CAST(RecordNumber AS STRING) AS key", "to_json(struct(*)) AS value")
+//      .writeStream
+//      .format("kafka")
+//      .outputMode("append")
+//      .option("kafka.bootstrap.servers", "192.168.1.100:9092")
+//      .option("topic", "topic_text")
+//      //.option("checkpointLocation", "c:/tmp/checkpoint")
+//      .start()
+//      .awaitTermination()
 
 
   }
