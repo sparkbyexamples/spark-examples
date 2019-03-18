@@ -36,21 +36,15 @@ object SparkStreamingConsumerKafkaJson {
       .add("gender",StringType)
       .add("salary",IntegerType)
 
-    val person = df.selectExpr("CAST(value AS STRING)")
+    val personDF = df.selectExpr("CAST(value AS STRING)")
     .select(from_json(col("value").cast("string"), schema).as("data"))
       .select("data.*")
 
-    val query = person.writeStream
+    personDF.writeStream
       .format("console")
       .outputMode("append")
       .start()
       .awaitTermination()
-
-//    df.writeStream
-//      .format("kafka")
-//      .option("kafka.bootstrap.servers", "192.168.1.100:9092")
-//      .option("topic", "json_another_topic")
-//      .start()
 
 
   }

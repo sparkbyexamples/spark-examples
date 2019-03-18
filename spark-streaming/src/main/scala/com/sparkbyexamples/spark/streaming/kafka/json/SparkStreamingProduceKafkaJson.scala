@@ -16,27 +16,35 @@ object SparkStreamingProduceKafkaJson {
     spark.sparkContext.setLogLevel("ERROR")
 
     val df = spark.readStream
-      .option("header", "true")
-      .option("maxFilesPerTrigger", 3)
-      .text("c:/tmp/stream_folder")
+      .format("kafka")
+      .option("kafka.bootstrap.servers", "192.168.1.100:9092")
+      .option("subscribe", "json_topic")
+      .option("startingOffsets", "earliest") // From starting
+      .load()
 
-    df.printSchema()
+    val schema = new StructType()
+      .add("id",IntegerType)
+      .add("firstname",StringType)
+      .add("middlename",StringType)
+      .add("lastname",StringType)
+      .add("dob",StringType)
+      .add("gender",StringType)
+      .add("salary",IntegerType)
 
-//
-//    val zipcodeDF = df.select(
-//      from_json(col("value").cast("string"), schema).alias("zipcode")).select("zipcode.*")
-//
-//    zipcodeDF.printSchema()
-//
-//    zipcodeDF.selectExpr("CAST(RecordNumber AS STRING) AS key", "to_json(struct(*)) AS value")
-//      .writeStream
-//      .format("kafka")
-//      .outputMode("append")
-//      .option("kafka.bootstrap.servers", "192.168.1.100:9092")
-//      .option("topic", "topic_text")
-//      //.option("checkpointLocation", "c:/tmp/checkpoint")
-//      .start()
-//      .awaitTermination()
+    val personDF = df.selectExpr("CAST(value AS STRING)")
+      .select(from_json(col("value").cast("string"), schema).as("data"))
+      .select("data.*")
+
+    personDF.printSchema()
+
+    personDF.selectExpr("CAST(id AS STRING) AS key", "to_json(struct(*)) AS value")
+      .writeStream
+      .format("kafka")
+      .outputMode("append")
+      .option("kafka.bootstrap.servers", "192.168.1.100:9092")
+      .option("topic", "json_another_topic")
+      .start()
+      .awaitTermination()
 
 
   }

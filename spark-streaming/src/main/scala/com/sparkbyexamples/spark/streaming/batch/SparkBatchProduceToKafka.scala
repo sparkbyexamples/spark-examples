@@ -37,9 +37,7 @@ object SparkBatchProduceToKafka {
       .option("topic","text_topic6")
       .save()
 
-    /*
-      Write Json to Kafka
-     */
+
     val data2 = Seq((1,"James ","","Smith",2018,1,"M",3000),
       (2,"Michael ","Rose","",2010,3,"M",4000),
       (3,"Robert ","","Williams",2010,3,"M",4000),
@@ -52,6 +50,9 @@ object SparkBatchProduceToKafka {
     import spark.sqlContext.implicits._
     val df2 = data2.toDF(columns:_*)
 
+    /*
+      Writing Json as a Value to Kafka topic
+     */
     df2.toJSON.write
       .format("kafka")
       .option("kafka.bootstrap.servers","192.168.1.100:9092")
@@ -60,6 +61,8 @@ object SparkBatchProduceToKafka {
 
     /*
       Another way of Writing Json
+      By sending key and value to Kafka
+      using to_json()
       */
     df2.selectExpr("CAST(id AS STRING) AS key", "to_json(struct(*)) AS value")
       .write
