@@ -40,17 +40,23 @@ object SparkStreamingConsumerKafkaJson {
     .select(from_json(col("value").cast("string"), schema).as("data"))
       .select("data.*")
 
-    val query = person.writeStream
-      .format("console")
+    /**
+     *uncomment below code if you want to write it to console for testing.
+     */
+//    val query = person.writeStream
+//      .format("console")
+//      .outputMode("append")
+//      .start()
+//      .awaitTermination()
+
+    df.selectExpr("CAST(id AS STRING) AS key", "to_json(struct(*)) AS value")
+      .writeStream
+      .format("kafka")
       .outputMode("append")
+      .option("kafka.bootstrap.servers", "192.168.1.100:9092")
+      .option("topic", "josn_data_topic")
       .start()
       .awaitTermination()
-
-//    df.writeStream
-//      .format("kafka")
-//      .option("kafka.bootstrap.servers", "192.168.1.100:9092")
-//      .option("topic", "json_another_topic")
-//      .start()
 
 
   }

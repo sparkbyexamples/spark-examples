@@ -16,9 +16,11 @@ object SparkStreamingFromSocket {
 
     val df = spark.readStream
       .format("socket")
-      .option("host","localhost")
-      .option("port","9090")
+      .option("host","192.168.1.100")
+      .option("port","7890")
       .load()
+
+    df.printSchema()
 
     val wordsDF = df.select(explode(split(df("value")," ")).alias("word"))
 
