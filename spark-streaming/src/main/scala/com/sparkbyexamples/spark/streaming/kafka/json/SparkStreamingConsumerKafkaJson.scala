@@ -32,12 +32,13 @@ object SparkStreamingConsumerKafkaJson {
       .add("firstname",StringType)
       .add("middlename",StringType)
       .add("lastname",StringType)
-      .add("dob",StringType)
+      .add("dob_year",IntegerType)
+      .add("dob_month",IntegerType)
       .add("gender",StringType)
       .add("salary",IntegerType)
 
     val person = df.selectExpr("CAST(value AS STRING)")
-    .select(from_json(col("value").cast("string"), schema).as("data"))
+    .select(from_json(col("value"), schema).as("data"))
       .select("data.*")
 
     /**
@@ -49,6 +50,9 @@ object SparkStreamingConsumerKafkaJson {
 //      .start()
 //      .awaitTermination()
 
+    /**
+      *uncomment below code if you want to write it to kafka topic.
+      */
     df.selectExpr("CAST(id AS STRING) AS key", "to_json(struct(*)) AS value")
       .writeStream
       .format("kafka")

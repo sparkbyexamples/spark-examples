@@ -1,70 +1,73 @@
 package com.sparkbyexamples.spark.streaming.kafka.avro
 
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.{col, from_json,to_json,struct}
+import org.apache.spark.sql.avro.to_avro
+import org.apache.spark.sql.types.{IntegerType, StringType, StructType}
 
 object KafkaProduceAvro {
 
-  def main(args:Array[String]): Unit ={
+  def main(args: Array[String]): Unit = {
 
-
-    val spark: SparkSession = SparkSession.builder().master("local[1]")
-      .appName("SparkByExamples.com")
+    val spark: SparkSession = SparkSession.builder()
+      .master("local[3]")
+      .appName("SparkByExample")
       .getOrCreate()
 
     spark.sparkContext.setLogLevel("ERROR")
 
-    val data = Seq((1,"James ","","Smith",2018,1,"M",3000),
-      (2,"Michael ","Rose","",2010,3,"M",4000),
-      (3,"Robert ","","Williams",2010,3,"M",4000),
-      (4,"Maria ","Anne","Jones",2005,5,"F",4000),
-      (5,"Jen","Mary","Brown",2010,7,"",-1)
-    )
-
-    val columns = Seq("id","firstname","middlename","lastname","dob_year",
-      "dob_month","gender","salary")
-    import spark.sqlContext.implicits._
-    val df = data.toDF(columns:_*)
-
-
-
-
-//    // `from_avro` requires Avro schema in JSON string format.
-//    val jsonFormatSchema = new String(Files.readAllBytes(Paths.get("src/main/resources/person.avsc")))
-//
-//    val df = spark
-//      .readStream
-//      .format("kafka")
-//      .option("kafka.bootstrap.servers", "host1:port1,host2:port2")
-//      .option("subscribe", "topic1")
-//      .load()
-//
-//    // 1. Decode the Avro data into a struct;
-//    // 2. Filter by column `favorite_color`;
-//    // 3. Encode the column `name` in Avro format.
-//    val output = df
-//      .select(from_avro(col("value"), jsonFormatSchema) as "user")
-//      .where(col("user.favorite_color") === "red")
-//      .select(to_avro(col("user.name")) as "value")
-
-//    val data = Seq (("iphone", "2007"),("iphone 3G","2008"),
-//      ("iphone 3GS","2009"),
-//      ("iphone 4","2010"),
-//      ("iphone 4S","2011"),
-//      ("iphone 5","2012"),
-//      ("iphone 8","2014"),
-//      ("iphone 10","2017"))
-//
-//    val df = spark.createDataFrame(data).toDF("key","value")
-
-    val ds = df.toJSON
-    ds.printSchema()
-
-    val query = ds
-      .writeStream
+    val df = spark.readStream
       .format("kafka")
       .option("kafka.bootstrap.servers", "192.168.1.100:9092")
-      .option("topic", "text_topic")
-      .start()
+      .option("subscribe", "json_topic")
+      .option("startingOffsets", "earliest") // From starting
+      .load()
 
+    df.printSchema()
+
+    //df.show(false)
+    //org.apache.spark.sql.AnalysisException: Queries with streaming sources must be executed with writeStream.start();;
+
+    val schema = new StructType()
+      .add("id",IntegerType)
+      .add("firstname",StringType)
+      .add("middlename",StringType)
+      .add("lastname",StringType)
+      .add("dob_year",IntegerType)
+      .add("dob_month",IntegerType)
+      .add("gender",StringType)
+      .add("salary",IntegerType)
+
+    val person = df.selectExpr("CAST(value AS STRING)") // First convert binary to string
+      .select(from_json(col("value"), schema).as("data"))
+      .select("data.*")
+
+    person.printSchema()
+    /**
+      *uncomment below code if you want to write it to console for testing.
+      */
+//    person.select(to_json(struct("id","firstname","middlename","lastname","dob_year","dob_month","gender","salary")).as("value"))
+//      .writeStream
+//        .format("console")
+//        .outputMode("append")
+//        .start()
+//        .awaitTermination()
+
+    /**
+      * First cast Kafka Binary tp String
+      * Convert
+      * Convert String to Avro
+      */
+
+    person.select(to_avro(col("firstname")) as "value")
+      .writeStream
+      .format("kafka")
+      .outputMode("append")
+      .option("kafka.bootstrap.servers", "192.168.1.100:9092")
+      .option("topic", "avro_topic9")
+      .option("checkpointLocation","c:/tmp")
+      .start()
+      .awaitTermination()
   }
+
 }

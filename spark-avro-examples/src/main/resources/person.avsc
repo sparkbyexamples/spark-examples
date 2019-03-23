@@ -3,6 +3,7 @@
   "name": "Person",
   "namespace": "com.sparkbyexamples",
   "fields": [
+    {"name": "id","type": "int"},
     {"name": "firstname","type": "string"},
     {"name": "middlename","type": "string"},
     {"name": "lastname","type": "string"},
