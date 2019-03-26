@@ -1,7 +1,5 @@
 package com.sparkbyexamples.spark.streaming.kafka.avro
-
 import java.nio.file.{Files, Paths}
-
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.avro._
 import org.apache.spark.sql.functions.col
@@ -11,7 +9,7 @@ object KafkaConsumerAvro {
 
       val spark: SparkSession = SparkSession.builder()
         .master("local")
-        .appName("SparkByExample")
+        .appName("SparkByExample.com")
         .getOrCreate()
 
       spark.sparkContext.setLogLevel("ERROR")
