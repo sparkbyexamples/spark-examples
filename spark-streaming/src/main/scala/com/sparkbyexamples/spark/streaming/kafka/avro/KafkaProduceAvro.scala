@@ -16,6 +16,9 @@ object KafkaProduceAvro {
 
     spark.sparkContext.setLogLevel("ERROR")
 
+    /*
+    This consumes JSON data from Kafka
+     */
     val df = spark.readStream
       .format("kafka")
       .option("kafka.bootstrap.servers", "192.168.1.100:9092")
@@ -23,10 +26,10 @@ object KafkaProduceAvro {
       .option("startingOffsets", "earliest") // From starting
       .load()
 
+    /*
+     Prints Kafka schema with columns (topic, offset, partition e.t.c)
+      */
     df.printSchema()
-
-    //df.show(false)
-    //org.apache.spark.sql.AnalysisException: Queries with streaming sources must be executed with writeStream.start();;
 
     val schema = new StructType()
       .add("id",IntegerType)
@@ -38,33 +41,35 @@ object KafkaProduceAvro {
       .add("gender",StringType)
       .add("salary",IntegerType)
 
-    val person = df.selectExpr("CAST(value AS STRING)") // First convert binary to string
+    /*
+    Converts JSON string to DataFrame
+     */
+    val personDF = df.selectExpr("CAST(value AS STRING)") // First convert binary to string
       .select(from_json(col("value"), schema).as("data"))
-      .select("data.*")
 
-    person.printSchema()
-    /**
+
+    personDF.printSchema()
+    /*
       *uncomment below code if you want to write it to console for testing.
       */
-//    person.select(to_json(struct("id","firstname","middlename","lastname","dob_year","dob_month","gender","salary")).as("value"))
+//    person.select(to_json(struct("data.*")).as("value"))
 //      .writeStream
 //        .format("console")
 //        .outputMode("append")
 //        .start()
 //        .awaitTermination()
 
-    /**
-      * First cast Kafka Binary tp String
-      * Convert
-      * Convert String to Avro
+    /*
+      * Convert DataFrame columns to Avro format and name it as "value"
+      * And send this Avro data to Kafka topic
       */
 
-    person.select(to_avro(col("firstname")) as "value")
+    personDF.select(to_avro(struct("data.*")) as "value")
       .writeStream
       .format("kafka")
       .outputMode("append")
       .option("kafka.bootstrap.servers", "192.168.1.100:9092")
-      .option("topic", "avro_topic9")
+      .option("topic", "avro_topic")
       .option("checkpointLocation","c:/tmp")
       .start()
       .awaitTermination()

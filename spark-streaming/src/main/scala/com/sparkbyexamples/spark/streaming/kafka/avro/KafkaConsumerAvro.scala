@@ -1,13 +1,10 @@
 package com.sparkbyexamples.spark.streaming.kafka.avro
 
-import java.io.File
 import java.nio.file.{Files, Paths}
 
-import org.apache.avro.Schema
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.avro._
 import org.apache.spark.sql.functions.col
-import org.apache.spark.sql.avro.from_avro
-import org.apache.spark.sql.types.{IntegerType, StringType, StructType}
 
 object KafkaConsumerAvro {
     def main(args: Array[String]): Unit = {
@@ -22,27 +19,30 @@ object KafkaConsumerAvro {
       val df = spark.readStream
         .format("kafka")
         .option("kafka.bootstrap.servers", "192.168.1.100:9092")
-        .option("subscribe", "avro_topic9")
+        .option("subscribe", "avro_topic")
         .option("startingOffsets", "earliest") // From starting
         .load()
 
+      /*
+       Prints Kafka schema with columns (topic, offset, partition e.t.c)
+        */
       df.printSchema()
 
-      //df.show(false)
-      //org.apache.spark.sql.AnalysisException: Queries with streaming sources must be executed with writeStream.start();;
-      //org.apache.avro.SchemaParseException: Type not supported: struct
+      /*
+      Read schema to convert Avro data to DataFrame
+       */
+      val jsonFormatSchema = new String(
+        Files.readAllBytes(Paths.get("./src/main/resources/person.avsc")))
 
-      //val jsonFormatSchema = new String(Files.readAllBytes(Paths.get("./src/main/resources/person.avsc")))
+      val personDF = df.select(from_avro(col("value"), jsonFormatSchema).as("person"))
+        .select("person.*")
 
-      val str = "{\n  \"type\": \"record\",\n  \"name\": \"Person\",\n  \"namespace\": \"com.sparkbyexamples\",\n  \"fields\": [\n    {\"name\": \"firstname\",\"type\": \"string\"}]}"
-      val person = df//.selectExpr("CAST(value AS STRING)")
-        .select(from_avro(col("value") , str).as("firstname"))
-        //.select("data.*")
+      personDF.printSchema()
 
-      /**
-        *uncomment below code if you want to write it to console for testing.
-        */
-      person.writeStream
+      /*
+      Stream data to Console for testing
+       */
+      personDF.writeStream
         .format("console")
         .outputMode("append")
         .start()

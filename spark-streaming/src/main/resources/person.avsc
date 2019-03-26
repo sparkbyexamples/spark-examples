@@ -3,13 +3,13 @@
   "name": "Person",
   "namespace": "com.sparkbyexamples",
   "fields": [
-    {"name": "id","type": "int"},
-    {"name": "firstname","type": "string"},
-    {"name": "middlename","type": "string"},
-    {"name": "lastname","type": "string"},
-    {"name": "dob_year","type": "int"},
-    {"name": "dob_month","type": "int"},
-    {"name": "gender","type": "string"},
-    {"name": "salary","type": "int"}
+    {"name": "id","type": ["int", "null"]},
+    {"name": "firstname","type": ["string", "null"]},
+    {"name": "middlename","type": ["string", "null"]},
+    {"name": "lastname","type": ["string", "null"]},
+    {"name": "dob_year","type": ["int", "null"]},
+    {"name": "dob_month","type": ["int", "null"]},
+    {"name": "gender","type": ["string", "null"]},
+    {"name": "salary","type": ["int", "null"]}
   ]
 }
