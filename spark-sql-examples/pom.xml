@@ -31,7 +31,7 @@
     </pluginRepositories>
 
     <dependencies>
-        <!--
+
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
@@ -43,6 +43,7 @@
             <version>1.2.5</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
@@ -61,13 +62,14 @@
             <version>${spark.version}</version>
          <scope>compile</scope>
         </dependency>
-          <dependency>
+
+        <dependency>
            <groupId>com.databricks</groupId>
            <artifactId>spark-xml_2.11</artifactId>
            <version>0.4.1</version>
        </dependency>
 
--->
+
     </dependencies>
 
     <build>

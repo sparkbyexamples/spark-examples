@@ -1,9 +1,0 @@
-{"namespace": "com.cloudera.sparkavro",
- "type": "record",
- "name": "User",
- "fields": [
-     {"name": "name", "type": "string"},
-     {"name": "favorite_number",  "type": ["null", "int"]},
-     {"name": "favorite_color", "type": ["null", "string"]}
- ]
-}
