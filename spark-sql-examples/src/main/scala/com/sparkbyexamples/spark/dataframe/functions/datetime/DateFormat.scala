@@ -1,13 +1,13 @@
-package com.sparkbyexamples.spark.dataframe.functions
+package com.sparkbyexamples.spark.dataframe.functions.datetime
 
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.functions.{to_date, _}
+import org.apache.spark.sql.functions._
 
 object DateFormat extends App {
 
   val spark:SparkSession = SparkSession.builder()
     .master("local")
-    .appName("SparkByExample")
+    .appName("SparkByExamples.com")
     .getOrCreate()
   spark.sparkContext.setLogLevel("ERROR")
 

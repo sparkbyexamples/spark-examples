@@ -1,7 +1,7 @@
-package com.sparkbyexamples.spark.dataframe.functions
+package com.sparkbyexamples.spark.dataframe.functions.datetime
 
-import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions._
+import org.apache.spark.sql.{DataFrame, SparkSession}
 
 object DateDiff extends App {
 

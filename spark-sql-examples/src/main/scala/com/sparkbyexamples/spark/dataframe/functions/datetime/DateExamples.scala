@@ -1,7 +1,8 @@
-package com.sparkbyexamples.spark.dataframe.functions
+package com.sparkbyexamples.spark.dataframe.functions.datetime
 
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.functions.{date_format, dayofweek, to_date, _}
+import org.apache.spark.sql.functions._
+
 object DateExamples {
 
   def main(args: Array[String]): Unit = {
