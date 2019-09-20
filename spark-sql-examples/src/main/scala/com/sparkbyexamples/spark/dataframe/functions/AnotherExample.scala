@@ -26,21 +26,6 @@ class AnotherExample {
     import spark.sqlContext.implicits._
     val df = data.toDF(columns:_*)
 
-    val data2 = Seq(Row("James ","","Smith","36636","M",3000),
-      Row("Michael ","Rose","","40288","M",4000),
-      Row("Robert ","","Williams","42114","M",4000),
-      Row("Maria ","Anne","Jones","39192","F",4000),
-      Row("Jen","Mary","Brown","","F",-1)
-    )
-
-    val schema2 = new StructType()
-      .add("firstname",StringType)
-      .add("middlename",StringType)
-      .add("lastname",StringType)
-      .add("dob",StringType)
-      .add("gender",StringType)
-      .add("salary",IntegerType)
-
     /**
       * schema using Row data
       */

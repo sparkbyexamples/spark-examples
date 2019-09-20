@@ -1,7 +1,7 @@
 package com.sparkbyexamples.spark.dataframe
 
 import org.apache.spark.sql.{Row, SparkSession}
-import org.apache.spark.sql.types.{IntegerType, StringType, StructType}
+import org.apache.spark.sql.types.{ArrayType, IntegerType, MapType, StringType, StructType}
 import org.apache.spark.sql.functions._
 object WithColumn {
 
@@ -12,54 +12,40 @@ object WithColumn {
       .appName("SparkByExamples.com")
       .getOrCreate()
 
-//    val filePath="C://000_Projects/opt/BigData/zipcodes.csv"
-//    val dfText = spark.read.text(filePath)
-//    dfText.show()
-//
-//    //reading as a CSV will separate the columns
-//    val dfcsv = spark.read.csv(filePath)
-//    dfcsv.show()
-//
-//    //Adding an option
-//    spark.read.option("inferSchema","true").csv(filePath)
-//
-//    //Chaining multiple options
-//    val df2 = spark.read.options(Map("inferSchema"->"true","sep"->",","header"->"true")).csv(filePath)
-//    df2.show(false)
-//    df2.printSchema()
-
-    val data = Seq(Row(Row("James ","","Smith"),"36636","M","3000"),
-      Row(Row("Michael ","Rose",""),"40288","M","4000"),
-      Row(Row("Robert ","","Williams"),"42114","M","4000"),
-      Row(Row("Maria ","Anne","Jones"),"39192","F","4000"),
-      Row(Row("Jen","Mary","Brown"),"","F","-1")
+    val arrayStructureData = Seq(
+      Row(Row("James ","","Smith"),"1","M",3100,List("Cricket","Movies"),Map("hair"->"black","eye"->"brown")),
+      Row(Row("Michael ","Rose",""),"2","M",3100,List("Tennis"),Map("hair"->"brown","eye"->"black")),
+      Row(Row("Robert ","","Williams"),"3","M",3100,List("Cooking","Football"),Map("hair"->"red","eye"->"gray")),
+      Row(Row("Maria ","Anne","Jones"),"4","M",3100,null,Map("hair"->"blond","eye"->"red")),
+      Row(Row("Jen","Mary","Brown"),"5","M",3100,List("Blogging"),Map("white"->"black","eye"->"black"))
     )
 
-    val schema = new StructType()
+    val arrayStructureSchema = new StructType()
       .add("name",new StructType()
         .add("firstname",StringType)
         .add("middlename",StringType)
         .add("lastname",StringType))
-      .add("dob",StringType)
+      .add("id",StringType)
       .add("gender",StringType)
-      .add("salary",StringType)
+      .add("salary",IntegerType)
+      .add("Hobbies", ArrayType(StringType))
+      .add("properties", MapType(StringType,StringType))
 
-    val df2 = spark.createDataFrame(spark.sparkContext.parallelize(data),schema)
+    val df2 = spark.createDataFrame(
+      spark.sparkContext.parallelize(arrayStructureData),arrayStructureSchema)
 
     //Change the column data type
     df2.withColumn("salary",df2("salary").cast("Integer"))
 
     //Derive a new column from existing
     val df4=df2.withColumn("CopiedColumn",df2("salary")* -1)
-    df4.show(2)
 
     //Transforming existing column
     val df5 = df2.withColumn("salary",df2("salary")*100)
-    df5.show(2)
 
     //You can also chain withColumn to change multiple columns
 
-    //Renaming a column. remember it returns a new RDD
+    //Renaming a column.
     val df3=df2.withColumnRenamed("gender","sex")
     df3.printSchema()
 
@@ -69,5 +55,21 @@ object WithColumn {
 
     //Adding a literal value
     df2.withColumn("Country", lit("USA")).printSchema()
+
+    //Retrieving
+    df2.show(false)
+    df2.select("name").show(false)
+    df2.select("name.firstname").show(false)
+    df2.select("name.*").show(false)
+
+
+    val df8 = df2.select(col("*"),explode(col("hobbies")))
+    df8.show(false)
+
+
+    //df8.select(from_collection())
+
+
+
   }
 }
