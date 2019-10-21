@@ -32,13 +32,14 @@ object StructTypeUsage extends App{
     Row("Jen","Mary","Brown","","F",-1)
   )
 
-  val simpleSchema = new StructType()
-    .add("firstname",StringType)
-    .add("middlename",StringType)
-    .add("lastname",StringType)
-    .add("id",StringType)
-    .add("gender",StringType)
-    .add("salary",IntegerType)
+  val simpleSchema = StructType(Array(
+    StructField("firstname",StringType,true),
+    StructField("middlename",StringType,true),
+    StructField("lastname",StringType,true),
+    StructField("id", StringType, true),
+    StructField("gender", StringType, true),
+    StructField("salary", IntegerType, true)
+  ))
 
   val df = spark.createDataFrame(spark.sparkContext.parallelize(simpleData),simpleSchema)
 
@@ -110,11 +111,11 @@ object StructTypeUsage extends App{
   /* with List, array and maps*/
 
   val arrayStructureData = Seq(
-    Row(Row("James ","","Smith"),List("Cricket","Movies"),Map("key1"->"val1","key2"->"val2")),
-    Row(Row("Michael ","Rose",""),List("Tennis"),Map("key1"->"val1","key2"->"val2")),
-    Row(Row("Robert ","","Williams"),List("Cooking","Football"),Map("key1"->"val1","key2"->"val2")),
-    Row(Row("Maria ","Anne","Jones"),null,Map("key1"->"val1","key2"->"val2")),
-    Row(Row("Jen","Mary","Brown"),List("Blogging"),Map("key1"->"val1","key2"->"val2"))
+    Row(Row("James ","","Smith"),List("Cricket","Movies"),Map("hair"->"black","eye"->"brown")),
+    Row(Row("Michael ","Rose",""),List("Tennis"),Map("hair"->"brown","eye"->"black")),
+    Row(Row("Robert ","","Williams"),List("Cooking","Football"),Map("hair"->"red","eye"->"gray")),
+    Row(Row("Maria ","Anne","Jones"),null,Map("hair"->"blond","eye"->"red")),
+    Row(Row("Jen","Mary","Brown"),List("Blogging"),Map("white"->"black","eye"->"black"))
   )
 
   val arrayStructureSchema = new StructType()
@@ -127,7 +128,7 @@ object StructTypeUsage extends App{
 
   val df5 = spark.createDataFrame(spark.sparkContext.parallelize(arrayStructureData),arrayStructureSchema)
   df5.printSchema()
-  df5.show()
+  df5.show(false)
 
   /* How to check to schemas are same */
 
