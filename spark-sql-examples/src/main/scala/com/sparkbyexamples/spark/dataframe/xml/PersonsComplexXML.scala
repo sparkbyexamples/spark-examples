@@ -16,7 +16,7 @@ object PersonsComplexXML {
     val df = spark.read
       .format("xml")
       .option("rowTag", "person")
-      .load("src/main/resources/persons.xml")
+      .load("src/main/resources/persons_complex.xml")
 
     df.printSchema()
 
