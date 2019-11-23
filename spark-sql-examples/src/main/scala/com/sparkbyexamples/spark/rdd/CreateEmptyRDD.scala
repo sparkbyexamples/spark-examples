@@ -14,15 +14,15 @@ object CreateEmptyRDD extends App{
 
   println(rdd)
   println(rddString)
-  println(rdd.getNumPartitions)
+  println("Num of Partitions: "+rdd.getNumPartitions)
 
   //rddString.saveAsTextFile("test.txt") // returns error
 
   val rdd2 = spark.sparkContext.parallelize(Seq.empty[String])
   println(rdd2)
-  println(rdd2.getNumPartitions)
+  println("Num of Partitions: "+rdd2.getNumPartitions)
 
-  //rdd2.saveAsTextFile("test2.txt")
+  //rdd2.saveAsTextFile("test3.txt")
 
   // Pair RDD
 
