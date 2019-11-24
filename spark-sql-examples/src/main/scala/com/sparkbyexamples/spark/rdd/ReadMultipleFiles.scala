@@ -4,6 +4,7 @@ import org.apache.spark.sql.SparkSession
 
 object ReadMultipleFiles extends App {
 
+
   val spark:SparkSession = SparkSession.builder()
     .master("local[1]")
     .appName("SparkByExamples.com")
@@ -41,5 +42,13 @@ object ReadMultipleFiles extends App {
     println(f._1+"=>"+f._2)
   })
 
+  val rdd5 = spark.sparkContext.textFile("C:/tmp/files/*")
+  val rdd6 = rdd5.map(f=>{
+    f.split(",")
+  })
+
+  rdd6.foreach(f => {
+    println("Col1:"+f(0)+",Col2:"+f(1))
+  })
 
 }
