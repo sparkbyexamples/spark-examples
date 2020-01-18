@@ -52,7 +52,7 @@
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-streams</artifactId>
             <version>2.1.0</version>
-			<test></test>
+			<test>Hi</test>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
