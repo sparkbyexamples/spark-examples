@@ -17,8 +17,8 @@ object SparkStreamingConsumerKafkaJson {
 
     val df = spark.readStream
         .format("kafka")
-        .option("kafka.bootstrap.servers", "192.168.1.100:9092")
-        .option("subscribe", "json_topic")
+        .option("kafka.bootstrap.servers", "172.21.0.1:9092")
+        .option("subscribe", "gofu-sync_sources")
         .option("startingOffsets", "earliest") // From starting
         .load()
 
@@ -29,13 +29,19 @@ object SparkStreamingConsumerKafkaJson {
 
     val schema = new StructType()
       .add("id",IntegerType)
-      .add("firstname",StringType)
-      .add("middlename",StringType)
-      .add("lastname",StringType)
-      .add("dob_year",IntegerType)
-      .add("dob_month",IntegerType)
-      .add("gender",StringType)
-      .add("salary",IntegerType)
+      .add("type",StringType)
+      .add("goapotik_merchant_code",StringType)
+      .add("product_code",StringType)
+      .add("product_name",StringType)
+      .add("price",LongType)
+      .add("qty",IntegerType)
+      .add("source_update_date",LongType)
+      .add("batch_code",StringType)
+      .add("additional_json",StringType)
+      .add("created_by",IntegerType)
+      .add("updated_by",IntegerType)
+      .add("created_at",LongType)
+      .add("updated_at",LongType)
 
     val person = df.selectExpr("CAST(value AS STRING)")
     .select(from_json(col("value"), schema).as("data"))
@@ -44,24 +50,24 @@ object SparkStreamingConsumerKafkaJson {
     /**
      *uncomment below code if you want to write it to console for testing.
      */
-//    val query = person.writeStream
-//      .format("console")
-//      .outputMode("append")
-//      .start()
-//      .awaitTermination()
+    val query = person.writeStream
+      .format("console")
+      .outputMode("append")
+      .start()
+      .awaitTermination()
 
     /**
       *uncomment below code if you want to write it to kafka topic.
       */
-    df.selectExpr("CAST(id AS STRING) AS key", "to_json(struct(*)) AS value")
+ /*   df.selectExpr("CAST(id AS STRING) AS key", "to_json(struct(*)) AS value")
       .writeStream
       .format("kafka")
       .outputMode("append")
-      .option("kafka.bootstrap.servers", "192.168.1.100:9092")
-      .option("topic", "josn_data_topic")
+      .option("kafka.bootstrap.servers", "172.21.0.1:9092")
+      .option("topic", "gofu-sync_sources")
       .start()
       .awaitTermination()
-
+*/
 
   }
 }
